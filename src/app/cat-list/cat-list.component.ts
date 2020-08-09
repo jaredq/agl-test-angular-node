@@ -1,20 +1,19 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
-import { cats } from '../cats';
+import { PeopleService } from "../people/people.service";
 
 @Component({
-  selector: 'app-cat-list',
-  templateUrl: './cat-list.component.html',
-  styleUrls: ['./cat-list.component.css']
+  selector: "app-cat-list",
+  templateUrl: "./cat-list.component.html",
+  styleUrls: ["./cat-list.component.css"]
 })
 export class CatListComponent {
-  cats = cats;
+  constructor(private peopleService: PeopleService) {}
 
-  share() {
-    window.alert('The cat has been shared!');
+  showCats() {
+    this.peopleService.getPeopleList();
   }
 }
-
 
 /*
 Copyright Google LLC. All Rights Reserved.
