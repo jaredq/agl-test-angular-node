@@ -1,3 +1,3 @@
-# angular-node-agl-test
+# agl-test-angular
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/angular-node-agl-test)
+[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/agl-test-angular)
