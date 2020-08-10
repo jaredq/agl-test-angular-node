@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { PeopleService } from "../people/people.service";
+import { PeopleService, People } from "../people/people.service";
 
 @Component({
   selector: "app-cat-list",
@@ -10,8 +10,12 @@ import { PeopleService } from "../people/people.service";
 export class CatListComponent {
   constructor(private peopleService: PeopleService) {}
 
+  peopleList = null;
+
   showCats() {
-    this.peopleService.getPeopleList();
+    this.peopleService.getPeopleList().subscribe(peopleList => {
+      this.peopleList = peopleList;
+    });
   }
 }
 
