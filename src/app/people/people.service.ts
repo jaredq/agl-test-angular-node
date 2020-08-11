@@ -3,11 +3,17 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
 
+/**
+ * Pet type
+ */
 export interface Pet {
   name: string;
   type: string;
 }
 
+/**
+ * People type
+ */
 export interface People {
   name: string;
   gender: string;
@@ -15,19 +21,83 @@ export interface People {
   pets: Pet[];
 }
 
+/**
+ * Pet group
+ */
+export interface PetGroups {
+  Male?: string[];
+  Female?: string[];
+  Other?: string[];
+}
+
 @Injectable({
   providedIn: "root"
 })
 export class PeopleService {
+  public static readonly PEOPLE_GENDER_MALE = "Male";
+  public static readonly PEOPLE_GENDER_FEMALE = "Female";
+  public static readonly PEOPLE_GENDER_OTHER = "Other";
+
+  public static readonly PET_TYPE_CAT = "Cat";
+  public static readonly PET_TYPE_DOG = "Dog";
+
+  public static readonly DEFAULT_PET_NAME = "Unknown";
+
   constructor(private http: HttpClient) {}
 
-  peopleListApiUrl = "http://agl-developer-test.azurewebsites.net/people.json";
+  peopleListApiUrl = "https://agl-developer-test.azurewebsites.net/people.json";
 
+  /**
+   * fetch the people list from API
+   */
   getPeopleList(): Observable<People[]> {
     return this.http.get<People[]>(this.peopleListApiUrl).pipe(
       tap(_ => console.log("fetched people list")),
       catchError(this.handleError<People[]>("getPeopleList", []))
     );
+  }
+
+  /**
+   * Group cats by its owner's gender
+   */
+  groupPetsByPeopleGender(peopleList: People[], petType: string) {
+    const catGroups: PetGroups = {};
+
+    peopleList.forEach(people => {
+      const pets = people.pets || [];
+      pets.forEach(pet => {
+        const petType = this.toTitleCase(pet && pet.type);
+        if (petType === PeopleService.PET_TYPE_CAT) {
+          const peopleGender = this.toFormattedGender(people.gender);
+          const catGroup = catGroups[peopleGender] || [];
+          catGroup.push(pet.name || PeopleService.DEFAULT_PET_NAME);
+          catGroups[peopleGender] = catGroup;
+        }
+      });
+    });
+
+    return catGroups;
+  }
+
+  /**
+   * format gender
+   */
+  private toFormattedGender(gender: string) {
+    let formattedGender = this.toTitleCase(gender);
+    if (
+      formattedGender != PeopleService.PEOPLE_GENDER_MALE &&
+      formattedGender != PeopleService.PEOPLE_GENDER_FEMALE
+    ) {
+      formattedGender = PeopleService.PEOPLE_GENDER_OTHER;
+    }
+    return formattedGender;
+  }
+
+  /**
+   * Convert a string to titled string
+   */
+  private toTitleCase(str: string) {
+    return str.charAt(0).toUpperCase() + str.substr(1).toLowerCase();
   }
 
   /**

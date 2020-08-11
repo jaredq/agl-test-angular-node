@@ -10,11 +10,18 @@ import { PeopleService, People } from "../people/people.service";
 export class CatListComponent {
   constructor(private peopleService: PeopleService) {}
 
-  peopleList = null;
+  peopleList = [];
+
+  catGroups;
 
   showCats() {
     this.peopleService.getPeopleList().subscribe(peopleList => {
       this.peopleList = peopleList;
+
+      this.catGroups = this.peopleService.groupPetsByPeopleGender(
+        this.peopleList,
+        PeopleService.PET_TYPE_CAT
+      );
     });
   }
 }
